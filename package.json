@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/jkltroth/FriendFinder/issues"
   },
-  "homepage": "https://github.com/jkltroth/FriendFinder#readme"
+  "homepage": "https://github.com/jkltroth/FriendFinder#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "path": "^0.12.7"
+  }
 }
