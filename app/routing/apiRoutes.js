@@ -16,20 +16,59 @@ module.exports = function (app) {
 
     // API POST Requests
     // Below code handles when a user submits a form and thus submits data to the server.
-    // In each of the below cases, when a user submits form data (a JSON object)
-    // ...the JSON is pushed to the appropriate JavaScript array
-    // (ex. User fills out a reservation request... this data is then sent to the server...
-    // Then the server saves the data to the tableData array)
     // ---------------------------------------------------------------------------
 
     app.post("/api/friends", function (req, res) {
-        // Note the code here. Our "server" will respond to requests and let users know if they have a table or not.
-        // It will do this by sending out the value "true" have a table
-        // req.body is available since we're using the body-parser middleware
 
-        console.log(req.body);
+        function indexOfMin(array) {
+            let leastDifference = 0;
+            for (let i = 1; i < array.length; i++) {
+                if (array[i] < array[leastDifference]) {
+                    leastDifference = i;
+                }
+            }
+            return leastDifference;
+        }
 
-        friendsData.push(req.body);
-        //   res.json(true);
+        //assign the user's survey data to 'NewUserData' variable
+        let newUserData = req.body;
+        console.log(newUserData);
+
+        // convert user's scores array which is currently made up of strings to an array of integers
+        let newUserScoreInts = newUserData.scores.map(Number);
+        console.log("New User Scores: " + newUserScoreInts);
+
+        // create an array to capture totalDifference (between new user and current friends) values
+        let totalDifferenceArr = [];
+
+        // iterate through friendsData array, converting scores array for each friend from an array of strings to an array of integers
+        for (let i = 0; i < friendsData.length; i++) {
+
+            // convert the scores array of friend[i] from an array of strings to an array of integers
+            let friendsScoreInts = friendsData[i].scores.map(Number);
+            console.log("Friend #" + (i + 1) + ": " + friendsScoreInts);
+
+            // measure the totalDifference value between new user and friend [i]
+            let totalDifference = 0;
+
+
+            for (let questionNum = 0; questionNum < 10; questionNum++) {
+                totalDifference += (Math.abs(friendsScoreInts[questionNum] - newUserScoreInts[questionNum]));
+            }
+
+            //push totalDifference between new user and friend [i] to totalDifferenceArr
+            totalDifferenceArr.push(totalDifference);
+        };
+
+        console.log("Total Difference Array: " + totalDifferenceArr);
+
+        console.log("Most Compatible: " + indexOfMin(totalDifferenceArr));
+
+        let mostCompatibleFriend = friendsData[indexOfMin(totalDifferenceArr)];
+
+        res.send(mostCompatibleFriend);
+        
+        friendsData.push(newUserData);
+
     });
 };
